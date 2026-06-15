@@ -12,6 +12,7 @@ import type {
 } from '@deriv/core';
 import { useBaseTrading } from '@/hooks/use-base-trading';
 import type { UseBaseTradingParams } from '@/hooks/use-base-trading';
+import { useUserPreferences } from '@/hooks/use-user-preferences';
 import type { Direction, DurationSelectUnit, DurationOption, OpenPosition, ClosedPosition } from '../lib/types';
 import { getDurationOptions, computeEndTimeEpoch } from '@/lib/duration-utils';
 
@@ -78,18 +79,47 @@ export function useRiseFallTrading({ ws, isConnected, isExhausted, isAuthenticat
     sellingId,
     sellError,
     clearSellError,
+    durationLimits,
+    defaultStake,
   } = useBaseTrading({ ws, isConnected, isExhausted, isAuthenticated, onAuthWSFailed, contractTypes: CONTRACT_TYPES });
+
+  const {
+    stake: storedStake,
+    setStake: setStoredStake,
+    duration: storedDuration,
+    setDuration: setStoredDuration,
+    durationUnit: storedDurationUnit,
+    setDurationUnit: setStoredDurationUnit,
+  } = useUserPreferences(durationLimits, defaultStake);
 
   const [direction, setDirection] = useState<Direction>('CALL');
   const [allowEquals, setAllowEquals] = useState<boolean>(false);
-  const [stake, setStake] = useState<string>('10');
-  const [duration, setDuration] = useState<number>(1);
-  const [durationUnit, setDurationUnitRaw] = useState<DurationSelectUnit>('t');
+  const [stake, setStakeState] = useState<string>(storedStake);
+  const [duration, setDurationState] = useState<number>(storedDuration);
+  const [durationUnit, setDurationUnitState] = useState<DurationSelectUnit>(storedDurationUnit);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [endTime, setEndTime] = useState<string>('');
   const [durationOptionsSymbol, setDurationOptionsSymbol] = useState<string | null>(null);
 
   const durationOptions = useMemo(() => getDurationOptions(contracts), [contracts]);
+
+  // Wrap setters to also persist to localStorage
+  const setStake = useCallback((value: string) => {
+    setStakeState(value);
+    setStoredStake(value);
+  }, [setStoredStake]);
+
+  const setDuration = useCallback((value: number) => {
+    setDurationState(value);
+    setStoredDuration(value);
+  }, [setStoredDuration]);
+
+  const setDurationUnit = useCallback((unit: DurationSelectUnit) => {
+    setDurationUnitState(unit);
+    setStoredDurationUnit(unit);
+    const opt = durationOptions.find(o => o.unit === unit);
+    if (opt && unit !== 'end-time') setDuration(opt.min);
+  }, [durationOptions, setStoredDurationUnit]);
 
   // Track durationUnit and activeSymbol in refs so the duration-options effect doesn't list them in deps
   const durationUnitRef = useRef(durationUnit);
@@ -108,23 +138,23 @@ export function useRiseFallTrading({ ws, isConnected, isExhausted, isAuthenticat
     if (!durationOptions.length) return;
     setEndDate(undefined);
     setEndTime('');
-    setDurationOptionsSymbol(activeSymbolKeyRef.current ?? null);
+    const currentSymbol = activeSymbol?.underlying_symbol;
+    setDurationOptionsSymbol(currentSymbol ?? null);
     const currentOpt = durationOptions.find(o => o.unit === durationUnitRef.current);
     if (!currentOpt) {
       const first = durationOptions[0];
-      setDurationUnitRaw(first.unit);
-      if (first.unit !== 'end-time') setDuration(first.min);
+      setDurationUnitState(first.unit);
+      if (first.unit !== 'end-time') {
+        setDurationState(first.min);
+        setStoredDuration(first.min);
+      }
     } else if (currentOpt.unit !== 'end-time') {
-      setDuration(prev => (prev < currentOpt.min || prev > currentOpt.max) ? currentOpt.min : prev);
+      const newDuration = duration < currentOpt.min || duration > currentOpt.max ? currentOpt.min : duration;
+      setDurationState(newDuration);
+      setStoredDuration(newDuration);
     }
   }, [durationOptions]);
   /* eslint-enable react-hooks/set-state-in-effect */
-
-  const setDurationUnit = useCallback((unit: DurationSelectUnit) => {
-    setDurationUnitRaw(unit);
-    const opt = durationOptions.find(o => o.unit === unit);
-    if (opt && unit !== 'end-time') setDuration(opt.min);
-  }, [durationOptions]);
 
   const { buyContract: buyWithProposal, isBuying, buyResult, buyError, clearBuyResult } =
     useBuy(tradingWs, tradingIsConnected);

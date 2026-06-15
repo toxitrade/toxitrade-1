@@ -6,10 +6,26 @@ import type { ActiveSymbol, ContractsForResponse, ContractInfo, DurationLimits }
 import { pickDefaultSymbol } from '../utils/pick-default-symbol';
 
 const SYMBOL_PARAM = 'symbol';
+const STORAGE_KEY = 'rise-fall-preferred-symbol';
 
 function readSymbolFromUrl(): string | undefined {
   if (typeof window === 'undefined') return undefined;
   return new URLSearchParams(window.location.search).get(SYMBOL_PARAM) ?? undefined;
+}
+
+function readSymbolFromStorage(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return localStorage.getItem(STORAGE_KEY) ?? undefined;
+}
+
+function saveSymbolToStorage(symbol: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, symbol);
+}
+
+function clearSymbolFromStorage(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 function writeSymbolToUrl(symbol: string): void {
@@ -74,6 +90,7 @@ export function useActiveSymbols(
     if (!symbol || symbol.underlying_symbol === activeSymbol?.underlying_symbol) return;
 
     setActiveSymbol(symbol);
+    saveSymbolToStorage(symbol.underlying_symbol);
     writeSymbolToUrl(symbol.underlying_symbol);
     loadContractsFor(ws, symbol).catch(() => {});
   }, [ws, isConnected, symbols, activeSymbol, loadContractsFor]);
@@ -97,8 +114,10 @@ export function useActiveSymbols(
         }
 
         setSymbols(allSymbols);
-        const chosen = pickDefaultSymbol(allSymbols, readSymbolFromUrl());
+        const preferredSymbol = readSymbolFromUrl() ?? readSymbolFromStorage();
+        const chosen = pickDefaultSymbol(allSymbols, preferredSymbol);
         setActiveSymbol(chosen);
+        saveSymbolToStorage(chosen.underlying_symbol);
         writeSymbolToUrl(chosen.underlying_symbol);
 
         await loadContractsFor(ws!, chosen);

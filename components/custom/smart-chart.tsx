@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import {
   ChartMode,
@@ -17,6 +17,36 @@ import type { UseSmartChartsApiReturn } from '@/hooks/use-smartcharts-api';
 import type { SmartChartChartData } from '@/hooks/use-smartchart-chart-data';
 import type { ContractMarker } from '@/lib/chart-markers';
 import { SMART_CHART_DRAWING_TOOL_POSITION } from '@/lib/smartchart-constants';
+
+const STORAGE_KEY = 'rise-fall-chart-preferences';
+
+interface ChartPreferences {
+  chartType: string;
+  granularity: number;
+  indicators: string[];
+}
+
+const defaultChartPrefs: ChartPreferences = {
+  chartType: 'line',
+  granularity: 0,
+  indicators: [],
+};
+
+function loadChartPreferences(): ChartPreferences {
+  if (typeof window === 'undefined') return defaultChartPrefs;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return defaultChartPrefs;
+    return { ...defaultChartPrefs, ...JSON.parse(stored) };
+  } catch {
+    return defaultChartPrefs;
+  }
+}
+
+function saveChartPreferences(prefs: ChartPreferences): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+}
 
 // In preview deployments the app is served under a basePath, so
 // SmartCharts must load its lazy assets from that same prefix.
@@ -95,8 +125,19 @@ export function SmartChartWrapper({
   barriers,
   contractsArray,
 }: SmartChartWrapperProps) {
-  const [chartType, setChartType] = useState<string | undefined>('line');
-  const [granularity, setGranularity] = useState(defaultGranularity);
+  const [chartPrefs, setChartPrefs] = useState<ChartPreferences>(() => loadChartPreferences());
+
+  useEffect(() => {
+    saveChartPreferences(chartPrefs);
+  }, [chartPrefs]);
+
+  const setChartType = useCallback((type: string) => {
+    setChartPrefs(prev => ({ ...prev, chartType: type }));
+  }, []);
+
+  const setGranularity = useCallback((value: number) => {
+    setChartPrefs(prev => ({ ...prev, granularity: value }));
+  }, []);
 
   const { resolvedTheme } = useTheme();
   const chartTheme =
@@ -123,7 +164,7 @@ export function SmartChartWrapper({
         {!isMobile && <Share />}
       </ToolbarWidget>
     ),
-    [isMobile]
+    [isMobile, setChartType, setGranularity]
   );
 
   const topWidgets = useCallback(
@@ -138,7 +179,7 @@ export function SmartChartWrapper({
         chartControlsWidgets={null}
         chartData={chartData}
         chartStatusListener={() => {}}
-        chartType={chartType}
+        chartType={chartPrefs.chartType}
         clearChart={false}
         drawingToolFloatingMenuPosition={
           isMobile ? SMART_CHART_DRAWING_TOOL_POSITION.mobile : SMART_CHART_DRAWING_TOOL_POSITION.desktop
@@ -146,14 +187,14 @@ export function SmartChartWrapper({
         enabledChartFooter={false}
         enabledNavigationWidget={!isMobile}
         getQuotes={getQuotes}
-        granularity={granularity}
+        granularity={chartPrefs.granularity}
         id={chartId}
         isConnectionOpened={isConnectionOpened}
         isLive={isLive}
         isMobile={isMobile}
         isVerticalScrollEnabled={false}
         {...(endEpoch !== undefined && { endEpoch })}
-        maxTick={isMobile ? (granularity === 0 ? 8 : 24) : undefined}
+        maxTick={isMobile ? (chartPrefs.granularity === 0 ? 8 : 24) : undefined}
         onSettingsChange={() => {}}
         settings={chartSettings}
         stateChangeListener={() => {}}
