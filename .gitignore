@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn.lock
+
+# Production
+.next/
+.next/
+out/
+dist/
+
+# Environment
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.tsbuildinfo
+components.cache/
+
+# Kilo
+.kilo/
+
+# Logs
+*.log
+next-dev.log
+
+# Archive
+rise-fall-app.zip
