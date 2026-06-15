@@ -21,6 +21,7 @@ import type { Direction, DurationSelectUnit, DurationOption } from '../lib/types
 import type { UseSmartChartsApiReturn } from '@/hooks/use-smartcharts-api';
 import type { SmartChartChartData } from '@/hooks/use-smartchart-chart-data';
 import type { OpenPosition } from '../lib/types';
+import type { TabValue } from '@/components/custom/header';
 
 const RiseFallChart = dynamic(() => import('./rise-fall-chart').then(m => m.RiseFallChart), {
   ssr: false,
@@ -139,6 +140,8 @@ export function RiseFallView({
   endEpoch,
   logoSrc,
   appName,
+  activeTab,
+  onTabChange,
 }: RiseFallViewProps) {
   const isMobile = useIsMobile();
   const contractMarkers = useContractMarkers(openPositions, activeSymbol?.underlying_symbol, isMobile);
@@ -171,9 +174,11 @@ export function RiseFallView({
         logoSrc={logoSrc}
         appName={appName}
         actions={<ThemeToggle />}
+        onTabChange={onTabChange}
+        activeTab={activeTab}
       />
       {/* Spacer to push content below fixed header — taller when authenticated (account bar visible) */}
-      <div className={authState === 'authenticated' ? 'h-[76px] shrink-0' : 'h-[66px] shrink-0'} />
+      <div className={authState === 'authenticated' ? 'h-[118px] shrink-0' : 'h-[108px] shrink-0'} />
 
       {/*
        * Content area.
