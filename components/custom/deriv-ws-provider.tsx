@@ -3,6 +3,7 @@
 import { createContext, useContext } from 'react';
 import { useDerivWS } from '@deriv/core';
 import { useAuth } from '@/hooks/use-auth';
+import { useLog } from '@/components/custom/log-context';
 import type { DerivWS } from '@deriv/core';
 import type { UseAuthReturn } from '@/hooks/use-auth';
 
@@ -22,9 +23,23 @@ const DerivWSContext = createContext<DerivWSContextValue | null>(null);
  */
 export function DerivWSProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
-  const { ws, isConnected, isExhausted } = useDerivWS({
+  const { log } = useLog();
+  const { ws, isConnected, isExhausted, setIsConnected, setIsExhausted } = useDerivWS({
     url: auth.wsUrl,
     accountId: auth.activeAccountId ?? undefined,
+    onConnect: () => {
+      setIsConnected(true);
+      setIsExhausted(false);
+      log('info', 'WebSocket connected');
+    },
+    onDisconnect: () => {
+      setIsConnected(false);
+      log('warn', 'WebSocket disconnected');
+    },
+    onExhausted: () => {
+      setIsExhausted(true);
+      log('info', 'WebSocket exhausted');
+    },
   });
 
   return (
