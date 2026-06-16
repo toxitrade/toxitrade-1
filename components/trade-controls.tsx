@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { EndTimePicker } from '@/components/custom/end-time-picker';
-import { useLog } from '@/components/custom/log-context';
 import type { DerivWS, ActiveSymbol, ProposalInfo, BuyResult } from '@deriv/core';
 import type { Direction, DurationSelectUnit, DurationOption } from '../lib/types';
 
@@ -71,12 +70,10 @@ export function TradeControls({
   onClearBuyResult,
   isAuthenticated,
 }: TradeControlsProps) {
-  const { log } = useLog();
   useEffect(() => {
     if (buyError) {
       toast.error('Purchase Failed', { description: buyError });
       onClearBuyResult();
-      log('error', `Purchase failed: ${buyError}`);
     }
   }, [buyError, onClearBuyResult]);
 
@@ -86,7 +83,6 @@ export function TradeControls({
         description: `Buy price: ${buyResult.buyPrice.toFixed(2)} USD | Payout: ${buyResult.payout.toFixed(2)} USD | Balance: ${buyResult.balanceAfter.toFixed(2)} USD`,
       });
       onClearBuyResult();
-      log('info', `Contract purchased: buy price ${buyResult.buyPrice.toFixed(2)} USD, payout ${buyResult.payout.toFixed(2)} USD, balance ${buyResult.balanceAfter.toFixed(2)} USD`);
     }
   }, [buyResult, onClearBuyResult]);
 

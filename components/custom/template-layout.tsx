@@ -1,7 +1,6 @@
 import { Providers } from './providers';
 import { DerivWSProvider } from './deriv-ws-provider';
 import { Toaster } from '@/components/ui/sonner';
-import { LogProvider } from './log-context';
 import ViewportScaler from './ViewportScaler';
 import { EnvCheck } from './env-check';
 
@@ -34,7 +33,6 @@ export function TemplateLayout({ children }: { children: React.ReactNode }) {
       </DerivWSProvider>
       <Toaster />
       <EnvCheck />
-      <LogProvider>{children}</LogProvider>
     </Providers>
   );
 }

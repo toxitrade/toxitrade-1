@@ -111,8 +111,7 @@ export function Header({
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex flex-col px-4 py-3 border-b bg-background/80 backdrop-blur-sm">
-      <div className="flex items-center justify-between px-4">
-        {/* Left: logo + app name */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {!logoSrc || logoError ? (
             <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
@@ -130,36 +129,9 @@ export function Header({
             {process.env.NEXT_PUBLIC_DERIV_APP_NAME ?? 'Deriv Trading'}
           </h1>
         </div>
-
-        {/* Middle: navigation tabs */}
-        <div className="flex-1 flex items-center justify-center">
-          {onTabChange && (
-            <NavigationTabs
-              activeTab={currentTab}
-              onTabChange={handleTabChange}
-            />
-          )}
-        </div>
-
-        {/* Right: actions, auth, account */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {actions}
-          {/* Auth buttons */}
-          {isAuthenticated ? (
-            <>
-              <Button variant="destructive" onClick={onLogout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="outline" size="sm" onClick={onLogin} disabled={isAuthenticating}>
-                {isAuthenticating ? 'Logging in...' : 'Log in'}
-              </Button>
-            </>
-          )}
-          {/* User icon / account switcher */}
-          {isAuthenticated && activeAccount ? (
+          {isAuthenticated && activeAccount && (
             <Popover open={accountSwitcherOpen} onOpenChange={setAccountSwitcherOpen}>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 rounded-lg border border-border px-3 hover:bg-muted/50 transition-colors">
@@ -207,9 +179,31 @@ export function Header({
                   ))}
                 </div>
               </PopoverContent>
-          ) : null}
+            </Popover>
+          )}
+          {isAuthenticated ? (
+            <Button variant="destructive" onClick={onLogout}>
+              Logout
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={onLogin} disabled={isAuthenticating}>
+                {isAuthenticating ? 'Logging in...' : 'Log in'}
+              </Button>
+              {onSignUp && (
+                <Button size="sm" onClick={onSignUp} disabled={isAuthenticating}>
+                  Sign up
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
+      {onTabChange && (
+        <div className="mt-3">
+          <NavigationTabs activeTab={currentTab} onTabChange={handleTabChange} />
+        </div>
+      )}
     </header>
   );
 }
