@@ -7,7 +7,9 @@ import { useRiseFallTrading } from '../hooks/use-rise-fall-trading';
 import { useDerivWSContext } from '@/components/custom/deriv-ws-provider';
 import { useLogoSrc } from '@/components/custom/logo-src-provider';
 import { TabValue } from '@/components/custom/header';
+import { Header } from '@/components/custom/header';
 import { RiseFallView } from '../components/rise-fall-view';
+import { LogPanel } from '@/components/custom/log-panel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function StrategyPlaceholder() {
@@ -67,15 +69,8 @@ export default function RiseFallPage() {
         return (
           <RiseFallView
             authState={authState}
-            accounts={accounts}
-            activeAccount={activeAccount}
-            onLogin={login}
-            onSignUp={signUp}
-            onLogout={logout}
-            onSwitchAccount={switchAccount}
-            logoSrc={logoSrc}
-            ws={trading.ws}
-            isConnected={trading.isConnected}
+            ws={ws}
+            isConnected={isConnected}
             isLoading={trading.isLoading}
             error={trading.error}
             activeSymbol={trading.activeSymbol}
@@ -108,8 +103,10 @@ export default function RiseFallPage() {
             getQuotes={getQuotes}
             subscribeQuotes={subscribeQuotes}
             unsubscribeQuotes={unsubscribeQuotes}
-            onTabChange={setActiveTab}
-            activeTab={activeTab}
+            isLive={true} // assuming live chart; we can pass from trading? but trading doesn't have isLive; we'll hardcode true for now
+            endEpoch={undefined} // no endEpoch
+            logoSrc={logoSrc}
+            appName={process.env.NEXT_PUBLIC_DERIV_APP_NAME ?? 'Deriv Trading'}
           />
         );
       case 'strategy':
@@ -117,15 +114,31 @@ export default function RiseFallPage() {
       case 'analysis':
         return <AnalysisPlaceholder />;
       case 'log':
-        return <LogPlaceholder />;
+        return <LogPanel />;
       default:
         return null;
     }
   };
 
   return (
-    <div className={activeTab === 'trading' ? '' : 'pt-[108px]'}>
-      {renderTabContent()}
-    </div>
+    <>
+      <Header
+        authState={authState}
+        accounts={accounts}
+        activeAccount={activeAccount}
+        onLogin={login}
+        onLogout={logout}
+        onSwitchAccount={switchAccount}
+        onSignUp={signUp}
+        logoSrc={logoSrc}
+        appName={process.env.NEXT_PUBLIC_DERIV_APP_NAME ?? 'Deriv Trading'}
+        actions={<ThemeToggle />}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+      <div>
+        {renderTabContent()}
+      </div>
+    </>
   );
 }
