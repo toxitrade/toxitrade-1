@@ -94,6 +94,10 @@ export interface RiseFallViewProps {
   // Branding (used by preview route; no-op in the real app)
   logoSrc?: string;
   appName?: string;
+
+  // Tab navigation
+  activeTab?: TabValue;
+  onTabChange?: (tab: TabValue) => void;
 }
 
 export function RiseFallView({
