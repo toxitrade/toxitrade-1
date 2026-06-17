@@ -6,6 +6,8 @@ import { useSmartChartChartData } from '@/hooks/use-smartchart-chart-data';
 import { useRiseFallTrading } from '../hooks/use-rise-fall-trading';
 import { useDerivWSContext } from '@/components/custom/deriv-ws-provider';
 import { useLogoSrc } from '@/components/custom/logo-src-provider';
+import { Header } from '@/components/custom/header';
+import { ThemeToggle } from '@/components/custom/theme-toggle';
 import { TabValue } from '@/components/custom/header';
 import { RiseFallView } from '../components/rise-fall-view';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -108,8 +110,6 @@ export default function RiseFallPage() {
             getQuotes={getQuotes}
             subscribeQuotes={subscribeQuotes}
             unsubscribeQuotes={unsubscribeQuotes}
-            onTabChange={setActiveTab}
-            activeTab={activeTab}
           />
         );
       case 'strategy':
@@ -124,8 +124,23 @@ export default function RiseFallPage() {
   };
 
   return (
-    <div className={activeTab === 'trading' ? '' : 'pt-[108px]'}>
-      {renderTabContent()}
-    </div>
+    <>
+      <Header
+        authState={authState}
+        accounts={accounts}
+        activeAccount={activeAccount}
+        onLogin={login}
+        onSignUp={signUp}
+        onLogout={logout}
+        onSwitchAccount={switchAccount}
+        logoSrc={logoSrc}
+        actions={<ThemeToggle />}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+      <div className="pt-[56px]">
+        {renderTabContent()}
+      </div>
+    </>
   );
 }

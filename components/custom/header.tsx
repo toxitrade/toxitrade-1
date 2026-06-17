@@ -110,8 +110,9 @@ export function Header({
   const isAuthenticating = authState === 'authenticating';
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex flex-col px-4 py-3 border-b bg-background/80 backdrop-blur-sm">
-      <div className="flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 flex px-4 py-3 border-b bg-background/80 backdrop-blur-sm h-[56px]">
+      <div className="flex items-center justify-between w-full">
+        {/* Left: Logo + App Name */}
         <div className="flex items-center gap-3">
           {!logoSrc || logoError ? (
             <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
@@ -129,6 +130,15 @@ export function Header({
             {process.env.NEXT_PUBLIC_DERIV_APP_NAME ?? 'Deriv Trading'}
           </h1>
         </div>
+
+        {/* Center: Navigation Tabs */}
+        {onTabChange && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <NavigationTabs activeTab={currentTab} onTabChange={handleTabChange} />
+          </div>
+        )}
+
+        {/* Right: Theme toggle + Auth buttons */}
         <div className="flex items-center gap-3">
           {actions}
           {isAuthenticated && activeAccount && (
@@ -199,11 +209,6 @@ export function Header({
           )}
         </div>
       </div>
-      {onTabChange && (
-        <div className="mt-3">
-          <NavigationTabs activeTab={currentTab} onTabChange={handleTabChange} />
-        </div>
-      )}
     </header>
   );
 }

@@ -3,8 +3,6 @@
 import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Footer } from '@/components/custom/footer';
-import { Header } from '@/components/custom/header';
-import { ThemeToggle } from '@/components/custom/theme-toggle';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 import { useContractMarkers } from '@/hooks/use-contract-markers';
@@ -21,7 +19,6 @@ import type { Direction, DurationSelectUnit, DurationOption } from '../lib/types
 import type { UseSmartChartsApiReturn } from '@/hooks/use-smartcharts-api';
 import type { SmartChartChartData } from '@/hooks/use-smartchart-chart-data';
 import type { OpenPosition } from '../lib/types';
-import type { TabValue } from '@/components/custom/header';
 
 const RiseFallChart = dynamic(() => import('./rise-fall-chart').then(m => m.RiseFallChart), {
   ssr: false,
@@ -94,10 +91,6 @@ export interface RiseFallViewProps {
   // Branding (used by preview route; no-op in the real app)
   logoSrc?: string;
   appName?: string;
-
-  // Tab navigation
-  activeTab?: TabValue;
-  onTabChange?: (tab: TabValue) => void;
 }
 
 export function RiseFallView({
@@ -144,8 +137,6 @@ export function RiseFallView({
   endEpoch,
   logoSrc,
   appName,
-  activeTab,
-  onTabChange,
 }: RiseFallViewProps) {
   const isMobile = useIsMobile();
   const contractMarkers = useContractMarkers(openPositions, activeSymbol?.underlying_symbol, isMobile);
@@ -165,25 +156,8 @@ export function RiseFallView({
     );
   }
 
-  return (
+return (
     <main className="flex flex-col bg-background max-lg:h-dvh lg:overflow-visible">
-      <Header
-        authState={authState}
-        accounts={accounts}
-        activeAccount={activeAccount}
-        onLogin={onLogin}
-        onSignUp={onSignUp}
-        onLogout={onLogout}
-        onSwitchAccount={onSwitchAccount}
-        logoSrc={logoSrc}
-        appName={appName}
-        actions={<ThemeToggle />}
-        onTabChange={onTabChange}
-        activeTab={activeTab}
-      />
-      {/* Spacer to push content below fixed header — taller when authenticated (account bar visible) */}
-      <div className={authState === 'authenticated' ? 'h-[118px] shrink-0' : 'h-[108px] shrink-0'} />
-
       {/*
        * Content area.
        * Mobile (< lg): flex-col, no outer scroll — the chart is pinned at 40 dvh
