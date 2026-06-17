@@ -8,6 +8,7 @@ import { useDerivWSContext } from '@/components/custom/deriv-ws-provider';
 import { useLogoSrc } from '@/components/custom/logo-src-provider';
 import { Header } from '@/components/custom/header';
 import { ThemeToggle } from '@/components/custom/theme-toggle';
+import { LogPanel } from '@/components/custom/log-panel';
 import { TabValue } from '@/components/custom/header';
 import { RiseFallView } from '../components/rise-fall-view';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,14 +41,9 @@ function AnalysisPlaceholder() {
 
 function LogPlaceholder() {
   return (
-    <Card className="w-full max-w-md mx-auto mt-12">
-      <CardHeader>
-        <CardTitle>Log</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">Logs page - coming soon</p>
-      </CardContent>
-    </Card>
+    <div className="w-full max-w-4xl mx-auto p-4">
+      <LogPanel />
+    </div>
   );
 }
 
