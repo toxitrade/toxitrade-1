@@ -61,10 +61,10 @@ export type StrategyParams =
   | AdaptiveConfluenceParams
   | DojiParams;
 
-export interface StrategyConfig<T extends StrategyParams = StrategyParams> {
+export interface StrategyConfig {
   id: StrategyId;
   enabled: StrategyEnabledFlags;
-  params: T;
+  params: StrategyParams;
 }
 
 export const STRATEGY_NAMES: Record<StrategyId, string> = {

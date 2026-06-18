@@ -86,18 +86,6 @@ export const INITIAL_STRATEGY_CONFIG: StrategyConfigState = {
   items: DEFAULT_STRATEGIES,
 };
 
-export function cloneStrategyConfig(state: StrategyConfigState): StrategyConfigState {
-  return {
-    activeId: state.activeId,
-    items: {
-      ...state.items,
-      ...Object.fromEntries(
-        Object.values(state.items).map(item => [item.id, { ...item, enabled: { ...item.enabled } }])
-      ),
-    },
-  };
-}
-
 export function getActiveStrategyConfig(state: StrategyConfigState): StrategyConfig {
   return state.items[state.activeId];
 }
@@ -108,49 +96,6 @@ export function setActiveStrategyId(state: StrategyConfigState, id: StrategyId):
   return {
     ...state,
     activeId: id,
-  };
-}
-
-export function updateStrategyParams<T extends StrategyId>(
-  state: StrategyConfigState,
-  id: T,
-  updater: (current: StrategyConfig[T]['params']) => StrategyConfig[T]['params']
-): StrategyConfigState {
-  if (!(id in state.items)) return state;
-
-  const current = state.items[id];
-  const nextParams = updater(current.params as StrategyConfig[T]['params']);
-
-  return {
-    ...state,
-    items: {
-      ...state.items,
-      [id]: {
-        ...current,
-        params: nextParams as StrategyConfig[T]['params'],
-      },
-    },
-  };
-}
-
-export function updateStrategyEnabled(
-  state: StrategyConfigState,
-  id: StrategyId,
-  updater: (current: StrategyEnabledFlags) => StrategyEnabledFlags
-): StrategyConfigState {
-  if (!(id in state.items)) return state;
-
-  const current = state.items[id];
-
-  return {
-    ...state,
-    items: {
-      ...state.items,
-      [id]: {
-        ...current,
-        enabled: updater(current.enabled),
-      },
-    },
   };
 }
 

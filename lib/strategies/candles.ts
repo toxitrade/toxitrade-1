@@ -1,3 +1,5 @@
+import { Candle } from './fast-ema-sma-cross';
+
 export type { Candle } from './fast-ema-sma-cross';
 
 export function buildCandlesFromTicks(ticks: { epoch: number; quote: number }[], periodSec: number): Candle[] {
