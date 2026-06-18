@@ -21,6 +21,7 @@ describe('multi-momentum', () => {
       rsiPeriod: 5,
       rsiHigh: 70,
       rsiLow: 30,
+      stochPeriod: 14,
       smaFast: 3,
       smaSlow: 5,
       bbPeriod: 5,

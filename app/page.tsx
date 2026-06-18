@@ -11,6 +11,8 @@ import { ThemeToggle } from '@/components/custom/theme-toggle';
 import { LogPanel } from '@/components/custom/log-panel';
 import { TabValue } from '@/components/custom/header';
 import { RiseFallView } from '../components/rise-fall-view';
+import { StrategyView } from '@/components/strategy-view';
+import { BacktestRunner } from '@/components/analysis/backtest-runner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function StrategyPlaceholder() {
@@ -109,9 +111,30 @@ export default function RiseFallPage() {
           />
         );
       case 'strategy':
-        return <StrategyPlaceholder />;
+        return (
+          <StrategyView
+            authState={authState}
+            accounts={accounts}
+            activeAccount={activeAccount}
+            onLogin={login}
+            onSignUp={signUp}
+            onLogout={logout}
+            onSwitchAccount={switchAccount}
+            logoSrc={logoSrc}
+            ws={trading.ws}
+            isConnected={trading.isConnected}
+            isLoading={trading.isLoading}
+            error={trading.error}
+            activeSymbol={trading.activeSymbol}
+            selectSymbol={trading.selectSymbol}
+            chartData={chartData}
+            getQuotes={getQuotes}
+            subscribeQuotes={subscribeQuotes}
+            unsubscribeQuotes={unsubscribeQuotes}
+          />
+        );
       case 'analysis':
-        return <AnalysisPlaceholder />;
+        return <BacktestRunner />;
       case 'log':
         return <LogPlaceholder />;
       default:
