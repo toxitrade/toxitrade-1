@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_STRATEGIES, type StrategyId } from '@/store/strategies';
+import { INDICATOR_KEYS, type IndicatorKey, type StrategyEnabledFlags } from '@/lib/strategies/types';
 
 const STORAGE_KEY = 'strategy-panel-preferences';
 
@@ -10,11 +11,20 @@ type StrategyTradeType = 'manual' | 'bot';
 interface PersistedStrategySettings {
   tradeType: StrategyTradeType;
   strategyId: StrategyId;
+  enabledIndicators: Record<StrategyId, StrategyEnabledFlags>;
+}
+
+function getDefaultEnabledIndicators(): Record<StrategyId, StrategyEnabledFlags> {
+  return (Object.keys(DEFAULT_STRATEGIES) as StrategyId[]).reduce((acc, strategyId) => {
+    acc[strategyId] = { ...DEFAULT_STRATEGIES[strategyId].enabled };
+    return acc;
+  }, {} as Record<StrategyId, StrategyEnabledFlags>);
 }
 
 const defaultSettings: PersistedStrategySettings = {
   tradeType: 'manual',
   strategyId: 'fast-ema-sma-cross',
+  enabledIndicators: getDefaultEnabledIndicators(),
 };
 
 function isStrategyTradeType(value: unknown): value is StrategyTradeType {
@@ -23,6 +33,17 @@ function isStrategyTradeType(value: unknown): value is StrategyTradeType {
 
 function isStrategyId(value: unknown): value is StrategyId {
   return typeof value === 'string' && value in DEFAULT_STRATEGIES;
+}
+
+function isValidEnabledIndicators(value: unknown): value is Record<StrategyId, StrategyEnabledFlags> {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<Record<StrategyId, StrategyEnabledFlags>>;
+
+  return (Object.keys(DEFAULT_STRATEGIES) as StrategyId[]).every((strategyId) => {
+    const indicators = candidate[strategyId];
+    if (!indicators || typeof indicators !== 'object') return false;
+    return INDICATOR_KEYS.every((indicator) => typeof indicators[indicator] === 'boolean');
+  });
 }
 
 function loadStrategySettings(): PersistedStrategySettings {
@@ -36,6 +57,9 @@ function loadStrategySettings(): PersistedStrategySettings {
     return {
       tradeType: isStrategyTradeType(parsed.tradeType) ? parsed.tradeType : defaultSettings.tradeType,
       strategyId: isStrategyId(parsed.strategyId) ? parsed.strategyId : defaultSettings.strategyId,
+      enabledIndicators: isValidEnabledIndicators(parsed.enabledIndicators)
+        ? (parsed.enabledIndicators as Record<StrategyId, StrategyEnabledFlags>)
+        : defaultSettings.enabledIndicators,
     };
   } catch {
     return defaultSettings;
@@ -62,10 +86,28 @@ export function useStrategySettings() {
     setSettings(prev => ({ ...prev, strategyId }));
   }, []);
 
+  const setIndicatorEnabled = useCallback((strategyId: StrategyId, indicator: IndicatorKey, enabled: boolean) => {
+    setSettings(prev => {
+      const current = prev.enabledIndicators[strategyId] ?? DEFAULT_STRATEGIES[strategyId]?.enabled ?? {};
+      return {
+        ...prev,
+        enabledIndicators: {
+          ...prev.enabledIndicators,
+          [strategyId]: {
+            ...current,
+            [indicator]: enabled,
+          },
+        },
+      };
+    });
+  }, []);
+
   return {
     tradeType: settings.tradeType,
     strategyId: settings.strategyId,
+    enabledIndicators: settings.enabledIndicators,
     setTradeType,
     setStrategyId,
+    setIndicatorEnabled,
   };
 }

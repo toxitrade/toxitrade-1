@@ -72,7 +72,7 @@ export function StrategyView({
   appName,
 }: StrategyViewProps) {
   const isMobile = useIsMobile();
-  const { tradeType, strategyId, setTradeType, setStrategyId } = useStrategySettings();
+  const { tradeType, strategyId, enabledIndicators, setTradeType, setStrategyId, setIndicatorEnabled } = useStrategySettings();
 
   if (error) {
     return (
@@ -128,7 +128,11 @@ export function StrategyView({
                   {tradeType === 'bot' && (
                     <>
                       <StrategySelector value={strategyId} onChange={setStrategyId} />
-                      <StrategyConfigPanel strategyId={strategyId} />
+                      <StrategyConfigPanel
+                        strategyId={strategyId}
+                        enabledIndicators={enabledIndicators[strategyId]}
+                        onIndicatorToggle={(indicator, enabled) => setIndicatorEnabled(strategyId, indicator, enabled)}
+                      />
                     </>
                   )}
                 </CardContent>

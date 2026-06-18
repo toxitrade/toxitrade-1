@@ -3,6 +3,7 @@ export type StrategyId = 'fast-ema-sma-cross' | 'multi-momentum' | 'adaptive-con
 export type SignalDirection = 'call' | 'put';
 
 export type IndicatorKey = 'rsi' | 'stoch' | 'macd' | 'sma' | 'ema' | 'bb';
+export const INDICATOR_KEYS: IndicatorKey[] = ['rsi', 'stoch', 'macd', 'sma', 'ema', 'bb'];
 
 export type StrategyEnabledFlags = Record<IndicatorKey, boolean>;
 
