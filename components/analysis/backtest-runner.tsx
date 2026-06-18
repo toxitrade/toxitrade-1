@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ImproveStrategyPanel } from '@/components/analysis/improve-strategy-panel';
 import { runBacktest } from '@/lib/strategies/backtest';
 import { fixtureCandles } from '@/lib/strategies/candles';
 import type { StrategyId } from '@/store/strategies';
@@ -70,6 +71,7 @@ export function BacktestRunner() {
             </div>
           </div>
         )}
+        <ImproveStrategyPanel />
       </CardContent>
     </Card>
   );
