@@ -42,26 +42,26 @@ export function StrategyConfigPanel({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Strategy values</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium">Strategy values</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 text-sm">
+      <CardContent className="space-y-3 text-xs">
         <section>
-          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
             Enabled indicators
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {INDICATOR_KEYS.map((indicator) => {
               const isSelected = safeIndicators[indicator];
               return (
                 <div
                   key={indicator}
                   className={cn(
-                    'flex items-center justify-between gap-3 rounded-md border px-3 py-2',
+                    'flex items-center justify-between gap-2 rounded border px-2 py-1',
                     isSelected ? 'border-primary/30 bg-primary/5 text-black' : 'border-border bg-muted/20 text-muted-foreground'
                   )}
                 >
-                  <span className={cn('text-sm font-semibold', isSelected ? 'text-black' : 'text-muted-foreground')}>
+                  <span className={cn('text-[11px] font-semibold', isSelected ? 'text-black' : 'text-muted-foreground')}>
                     {getIndicatorLabel(indicator)}
                   </span>
                   <Switch
@@ -76,14 +76,14 @@ export function StrategyConfigPanel({
         </section>
 
         <section>
-          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
             Parameters
           </div>
-          <div className="grid gap-2 rounded-md border bg-muted/30 p-3">
+          <div className="grid gap-1.5 rounded-md border bg-muted/30 p-2">
             {Object.entries(config.params).map(([key, value]) => (
               <div key={key} className="flex items-center justify-between gap-4">
-                <span className="font-medium capitalize text-foreground">{key}</span>
-                <span className="font-mono text-muted-foreground">{formatParamValue(value)}</span>
+                <span className="text-[11px] font-medium capitalize text-foreground">{key}</span>
+                <span className="text-[10px] font-mono text-muted-foreground">{formatParamValue(value)}</span>
               </div>
             ))}
           </div>

@@ -92,7 +92,7 @@ export function StrategyView({
   return (
     <main className="flex flex-col bg-background max-lg:h-dvh lg:overflow-visible">
       <div className="flex w-full max-w-7xl mx-auto flex-col max-lg:px-0 max-lg:py-0 px-3 py-2 sm:px-4 sm:py-4 gap-2 sm:gap-3 max-lg:flex-1 max-lg:min-h-0 max-lg:overflow-hidden lg:flex-none lg:overflow-visible">
-        <div className="max-lg:flex max-lg:flex-col max-lg:flex-1 max-lg:min-h-0 lg:grid lg:grid-cols-[1fr_300px] lg:gap-4">
+        <div className="max-lg:flex max-lg:flex-col max-lg:flex-1 max-lg:min-h-0 lg:grid lg:grid-cols-[2.1fr_0.9fr] lg:gap-3">
           {/* Column 1: Chart */}
           <div className="max-lg:shrink-0 flex flex-col gap-2 max-lg:px-3 max-lg:pb-2 pt-2 lg:py-0">
             <div className="max-lg:h-[45dvh] lg:h-[min(33.6rem,66vh)] lg:min-h-[384px]">
@@ -118,12 +118,12 @@ export function StrategyView({
           </div>
 
           {/* Column 2: Strategy controls */}
-          <div className="max-lg:flex-1 max-lg:min-h-0 max-lg:overflow-y-auto max-lg:overscroll-contain max-lg:px-3 max-lg:border-t max-lg:border-border max-lg:pt-3 max-lg:pb-28 lg:pt-0 flex flex-col gap-3">
+          <div className="max-lg:flex-1 max-lg:min-h-0 max-lg:overflow-y-auto max-lg:overscroll-contain max-lg:px-2 max-lg:border-t max-lg:border-border max-lg:pt-2 max-lg:pb-20 lg:pt-0 flex flex-col gap-2">
             {isLoading ? (
-              <Skeleton className="lg:h-[min(33.6rem,66vh)] lg:min-h-[384px] max-lg:h-48 w-full rounded-xl" />
+              <Skeleton className="lg:h-[min(33.6rem,66vh)] lg:min-h-[384px] max-lg:h-48 w-full rounded-md" />
             ) : (
-              <Card className="lg:h-[min(33.6rem,66vh)] lg:min-h-[384px] lg:overflow-y-auto">
-                <CardContent className="pt-4 space-y-4">
+              <Card className="lg:h-[min(33.6rem,66vh)] lg:min-h-[384px] lg:overflow-y-auto border-shadow">
+                <CardContent className="pt-3 space-y-3">
                   <TradeTypeSelector value={tradeType} onChange={setTradeType} />
                   {tradeType === 'bot' && (
                     <>
