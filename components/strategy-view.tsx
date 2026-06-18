@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Footer } from '@/components/custom/footer';
@@ -15,7 +14,8 @@ import type {
 import type { SmartChartChartData } from '@/hooks/use-smartchart-chart-data';
 import type { UseSmartChartsApiReturn } from '@/hooks/use-smartcharts-api';
 import { TradeTypeSelector, StrategySelector } from '@/components/strategy/trade-type-selector';
-import { DEFAULT_STRATEGIES, type StrategyId } from '@/store/strategies';
+import { StrategyConfigPanel } from '@/components/strategy/strategy-config-panel';
+import { useStrategySettings } from '@/hooks/use-strategy-settings';
 
 const StrategyChart = dynamic(() => import('./rise-fall-chart').then(m => m.RiseFallChart), {
   ssr: false,
@@ -72,8 +72,7 @@ export function StrategyView({
   appName,
 }: StrategyViewProps) {
   const isMobile = useIsMobile();
-  const [tradeType, setTradeType] = useState<'manual' | 'bot'>('manual');
-  const [activeStrategy, setActiveStrategy] = useState<StrategyId>('fast-ema-sma-cross');
+  const { tradeType, strategyId, setTradeType, setStrategyId } = useStrategySettings();
 
   if (error) {
     return (
@@ -128,10 +127,8 @@ export function StrategyView({
                   <TradeTypeSelector value={tradeType} onChange={setTradeType} />
                   {tradeType === 'bot' && (
                     <>
-                      <StrategySelector value={activeStrategy} onChange={setActiveStrategy} />
-                      <div className="text-sm text-muted-foreground">
-                        Strategy configuration panel - Bot mode active
-                      </div>
+                      <StrategySelector value={strategyId} onChange={setStrategyId} />
+                      <StrategyConfigPanel strategyId={strategyId} />
                     </>
                   )}
                 </CardContent>

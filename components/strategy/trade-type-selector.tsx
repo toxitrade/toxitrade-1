@@ -1,7 +1,8 @@
 'use client';
 
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { STRATEGY_NAMES, type StrategyId } from '@/lib/strategies/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { STRATEGY_NAMES, STRATEGY_IDS, type StrategyId } from '@/lib/strategies/types';
 
 interface TradeTypeSelectorProps {
   value: 'manual' | 'bot';
@@ -31,13 +32,21 @@ interface StrategySelectorProps {
 }
 
 export function StrategySelector({ value, onChange }: StrategySelectorProps) {
-  const options = Object.entries(STRATEGY_NAMES) as [StrategyId, string][];
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-muted-foreground">Strategy</label>
-      <div className="p-2 border rounded-md bg-card">
-        <span className="text-sm font-semibold">{value ? STRATEGY_NAMES[value] : 'Select strategy'}</span>
-      </div>
+      <Select value={value} onValueChange={(nextValue) => onChange(nextValue as StrategyId)}>
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select strategy" />
+        </SelectTrigger>
+        <SelectContent>
+          {STRATEGY_IDS.map((strategyId) => (
+            <SelectItem key={strategyId} value={strategyId}>
+              {STRATEGY_NAMES[strategyId]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
