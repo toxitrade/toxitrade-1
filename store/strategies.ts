@@ -8,6 +8,8 @@ import type {
   StrategyEnabledFlags,
 } from '@/lib/strategies/types';
 
+export type { StrategyId } from '@/lib/strategies/types';
+
 function boolFlags(partial: Partial<StrategyEnabledFlags> = {}): StrategyEnabledFlags {
   return {
     rsi: partial.rsi ?? false,
