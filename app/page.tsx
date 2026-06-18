@@ -13,33 +13,6 @@ import { TabValue } from '@/components/custom/header';
 import { RiseFallView } from '../components/rise-fall-view';
 import { StrategyView } from '@/components/strategy-view';
 import { BacktestRunner } from '@/components/analysis/backtest-runner';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-function StrategyPlaceholder() {
-  return (
-    <Card className="w-full max-w-md mx-auto mt-12">
-      <CardHeader>
-        <CardTitle>Estrategy</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">Strategy page - coming soon</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function AnalysisPlaceholder() {
-  return (
-    <Card className="w-full max-w-md mx-auto mt-12">
-      <CardHeader>
-        <CardTitle>Analisys</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">Analysis page - coming soon</p>
-      </CardContent>
-    </Card>
-  );
-}
 
 function LogPlaceholder() {
   return (
